@@ -15,9 +15,12 @@ run {
     if (project.hasProperty("etag")) {
         args = args << "${etag}"
     }
+  <<<<<<< hkj-phone-auth
     if (project.hasProperty("version") && !project.version.equals("unspecified")) {
         args = args << "${version}"
     }
+  =======
+  >>>>>>> auth
     standardInput = System.in
 }
 
