@@ -1,7 +1,11 @@
 Firebase Remote Config REST API Java Quickstart
 ===============================================
 
+  <<<<<<< hkj-phone-auth
+The [Firebase Remote Config](https://firebase.google.com/docs/remote-config/) Java quickstart app demonstrates retrieving and
+  =======
 The Firebase Remote Config Java quickstart app demonstrates retrieving and
+  >>>>>>> auth
 updating the Firebase Remote Config template.
 
 Introduction
@@ -21,10 +25,18 @@ Getting started
 Run
 ---
 
+  <<<<<<< hkj-phone-auth
+- Get active template
+  - From the `config` directory run `./gradlew run -Paction=get` to retrieve the template.
+    - The returned template is stored in a file named `config.json`.
+    - Note the ETag printed to the console you will need to use it when publishing template updates.
+- Update the template
+  =======
 - From the `config` directory run `./gradlew run -Paction=get` to retrieve the template.
   - The returned template is stored in a file named `config.json`.
   - Note the Etag printed to the console you will need to use it when publishing template updates.
 - Update the template.
+  >>>>>>> auth
   - If your template already has parameters, adjust one or more of the values.
   - If your template is empty, update it to look like this:
 
@@ -58,10 +70,23 @@ Run
           }
         }
 
+  <<<<<<< hkj-phone-auth
+  - From the `config` directory run `./gradlew run -Paction=publish -Petag='<LATEST_ETAG>'` to update the template.
+    - Be sure to set the etag to the one that was last printed in the console.
+  - Confirm in the console that the template has been updated.
+    - At this point mobile clients can fetch the updated values.
+- View existing versions
+  - From the `config` directory run `./gradlew run -Paction=versions` to print the
+    last 5 template versions.
+- Roll back to an existing template
+  - From the `config` directory run `./gradlew run -Paction=rollback -Pversion=<TEMPLATE_VERSION_NUMBER>` to
+    activate the template with the matching version number.
+  =======
 - From the `config` directory run `./gradlew run -Paction=publish -Petag='<LATEST_ETAG>'` to update the template.
   - Be sure to set the etag to the one that was last printed in the console.
 - Confirm in the console that the template has been updated.
   - At this point mobile clients can fetch the updated values.
+  >>>>>>> auth
 
 Best practices
 --------------
@@ -69,6 +94,32 @@ Best practices
 This section provides some additional information about how the Remote Config
 REST API should be used when retrieving and updating templates.
 
+  <<<<<<< hkj-phone-auth
+### [Versions](https://firebase.google.com/docs/remote-config/templates) ###
+
+Each time you update parameters, {{remote_config}} creates a
+new versioned {{remote_config}} template and stores the previous template as
+a version that you can retrieve or roll back to as needed.
+
+All non-active versions expire and are removed if they are older than 90 days or if
+there are more than 300 newer template versions. Since template versions expire, any
+versions that need to be retrieved later on should be persisted externally.
+
+Use the `listVersions` [query parameters](https://firebase.google.com/docs/reference/remote-config/rest/v1/projects.remoteConfig/listVersions#query-parameters)
+to filter the versions that are returned.
+
+### ETags ###
+
+Each time the Remote Config template it retrieved an ETag is included. This ETag is a
+unique identifier of the current template on the server. When submitting updates
+to the template you must include the latest ETag to ensure that your updates are consistent.
+
+In the event that you want to completely overwrite the server's template use
+an ETag of "\*". Use this with caution since this operation cannot be undone.
+
+**NOTE:** To get the ETag your request must accept the gzip encoding. Add the header
+`Accept-Encoding: gzip` to receive the ETag in the response header `ETag`.
+  =======
 ### Etags ###
 
 Each time the Remote Config template it retrieved an Etag is included. This Etag is a
@@ -77,9 +128,14 @@ to the template you must include the latest Etag to ensure that your updates are
 
 In the event that you want to completely overwrite the server's template use
 an Etag of "\*". Use this with caution since this operation cannot be undone.
+  >>>>>>> auth
 
 Support
 -------
 
+  <<<<<<< hkj-phone-auth
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/firebase-remote-config)
+  =======
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/firebase-cloud-messaging)
+  >>>>>>> auth
 - [Firebase Support](https://firebase.google.com/support/)

@@ -4,7 +4,13 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+  <<<<<<< hkj-phone-auth
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+  =======
+import com.google.gson.JsonParser;
+  >>>>>>> auth
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,7 +32,11 @@ import java.util.zip.GZIPOutputStream;
  */
 public class Configure {
 
+  <<<<<<< hkj-phone-auth
+  private final static String PROJECT_ID = "PROJECT_ID";
+  =======
   private final static String PROJECT_ID = "<YOUR-PROJECT-ID>";
+  >>>>>>> auth
   private final static String BASE_URL = "https://firebaseremoteconfig.googleapis.com";
   private final static String REMOTE_CONFIG_ENDPOINT = "/v1/projects/" + PROJECT_ID + "/remoteConfig";
   private final static String[] SCOPES = { "https://www.googleapis.com/auth/firebase.remoteconfig" };
@@ -54,7 +64,11 @@ public class Configure {
    * @throws IOException
    */
   private static void getTemplate() throws IOException {
+  <<<<<<< hkj-phone-auth
+    HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT);
+  =======
     HttpURLConnection httpURLConnection = getCommonConnection();
+  >>>>>>> auth
     httpURLConnection.setRequestMethod("GET");
     httpURLConnection.setRequestProperty("Accept-Encoding", "gzip");
 
@@ -87,6 +101,68 @@ public class Configure {
   }
 
   /**
+  <<<<<<< hkj-phone-auth
+   * Print the last 5 available Firebase Remote Config template metadata from the server.
+   *
+   * @throws IOException
+   */
+  private static void getVersions() throws IOException {
+    HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT
+            + ":listVersions?pageSize=5");
+    httpURLConnection.setRequestMethod("GET");
+
+    int code = httpURLConnection.getResponseCode();
+    if (code == 200) {
+      String versions = inputstreamToPrettyString(httpURLConnection.getInputStream());
+
+      System.out.println("Versions:");
+      System.out.println(versions);
+    } else {
+      System.out.println(inputstreamToString(httpURLConnection.getErrorStream()));
+    }
+  }
+
+  /**
+   * Roll back to an available version of Firebase Remote Config template.
+   *
+   * @param version The version to roll back to.
+   *
+   * @throws IOException
+   */
+  private static void rollback(int version) throws IOException {
+    HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT
+            + ":rollback");
+    httpURLConnection.setDoOutput(true);
+    httpURLConnection.setRequestMethod("POST");
+    httpURLConnection.setRequestProperty("Accept-Encoding", "gzip");
+
+    JsonObject jsonObject = new JsonObject();
+    jsonObject.addProperty("version_number", version);
+
+    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(httpURLConnection.getOutputStream());
+    outputStreamWriter.write(jsonObject.toString());
+    outputStreamWriter.flush();
+    outputStreamWriter.close();
+
+    int code = httpURLConnection.getResponseCode();
+    if (code == 200) {
+      System.out.println("Rolled back to: "  + version);
+      InputStream inputStream = new GZIPInputStream(httpURLConnection.getInputStream());
+      System.out.println(inputstreamToPrettyString(inputStream));
+
+      // Print ETag
+      String etag = httpURLConnection.getHeaderField("ETag");
+      System.out.println("ETag from server: " + etag);
+    } else {
+      System.out.println("Error:");
+      InputStream inputStream = new GZIPInputStream(httpURLConnection.getErrorStream());
+      System.out.println(inputstreamToString(inputStream));
+    }
+  }
+
+  /**
+  =======
+  >>>>>>> auth
    * Publish local template to Firebase server.
    *
    * @throws IOException
@@ -103,7 +179,11 @@ public class Configure {
     }
 
     System.out.println("Publishing template...");
+  <<<<<<< hkj-phone-auth
+    HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT);
+  =======
     HttpURLConnection httpURLConnection = getCommonConnection();
+  >>>>>>> auth
     httpURLConnection.setDoOutput(true);
     httpURLConnection.setRequestMethod("PUT");
     httpURLConnection.setRequestProperty("If-Match", etag);
@@ -144,6 +224,29 @@ public class Configure {
   }
 
   /**
+  <<<<<<< hkj-phone-auth
+   * Format content from an InputStream as pretty JSON.
+   *
+   * @param inputStream Content to be formatted.
+   * @return Pretty JSON formatted string.
+   *
+   * @throws IOException
+   */
+  private static String inputstreamToPrettyString(InputStream inputStream) throws IOException {
+    String response = inputstreamToString(inputStream);
+
+    JsonParser jsonParser = new JsonParser();
+    JsonElement jsonElement = jsonParser.parse(response);
+
+    Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    String jsonStr = gson.toJson(jsonElement);
+
+    return jsonStr;
+  }
+
+  /**
+  =======
+  >>>>>>> auth
    * Read contents of InputStream into String.
    *
    * @param inputStream InputStream to read.
@@ -165,8 +268,13 @@ public class Configure {
    * @return Base HttpURLConnection.
    * @throws IOException
    */
+  <<<<<<< hkj-phone-auth
+  private static HttpURLConnection getCommonConnection(String endpoint) throws IOException {
+    URL url = new URL(endpoint);
+  =======
   private static HttpURLConnection getCommonConnection() throws IOException {
     URL url = new URL(BASE_URL + REMOTE_CONFIG_ENDPOINT);
+  >>>>>>> auth
     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
     httpURLConnection.setRequestProperty("Authorization", "Bearer " + getAccessToken());
     httpURLConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
@@ -176,14 +284,31 @@ public class Configure {
   public static void main(String[] args) throws IOException {
     if (args.length > 1 && args[0].equals("publish")) {
       publishTemplate(args[1]);
+  <<<<<<< hkj-phone-auth
+    } else if (args.length == 1 && args[0].equals("get")) {
+      getTemplate();
+    } else if (args.length == 1 && args[0].equals("versions")) {
+      getVersions();
+    } else if (args.length > 1 && args[0].equals("rollback")) {
+      rollback(Integer.parseInt(args[1]));
+  =======
     } else if (args.length == 1 && args[0].equals("get")){
       getTemplate();
+  >>>>>>> auth
     } else {
       System.err.println("Invalid request. Please use one of the following commands:");
       // To get the current template from the server.
       System.err.println("./gradlew run -Paction=get");
       // To publish the template in config.json to the server.
+  <<<<<<< hkj-phone-auth
+      System.err.println("./gradlew run -Paction=publish -Petag='<LATEST_ETAG>'");
+      // To get the available template versions from the server.
+      System.err.println("./gradlew run -Paction=versions");
+      // To roll back to a particular version.
+      System.err.println("./gradlew run -Paction=rollback -Pversion=<TEMPLATE_VERSION_NUMBER>");
+  =======
       System.err.println("./gradlew run -Paction=publish -Petag='LATEST_ETAG'");
+  >>>>>>> auth
     }
   }
 
