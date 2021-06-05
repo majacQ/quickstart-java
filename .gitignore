@@ -3,7 +3,10 @@
 
 build/
 
+service-account.json
+
 *.class
 *.war
 *.ear
 *.aar
+*.iml
